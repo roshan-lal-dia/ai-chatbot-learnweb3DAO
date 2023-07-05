@@ -12,7 +12,31 @@ export default function Home() {
     },
   ]);
 
-  
+  const callGetResponse = async () => {
+    setIsLoading(true);
+    let temp = messages;
+    temp.push({ role: "user", content: theInput });
+		setMessages(temp)
+    setTheInput("");
+    console.log("Calling OpenAI...");
+
+    const response = await fetch("/api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({ messages }),
+    });
+
+    const data = await response.json();
+    const { output } = data;
+    console.log("OpenAI replied...", output.content);
+
+    setMessages((prevMessages) => [...prevMessages, output]);
+    setIsLoading(false);
+
+  };
 
 const Submit = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
